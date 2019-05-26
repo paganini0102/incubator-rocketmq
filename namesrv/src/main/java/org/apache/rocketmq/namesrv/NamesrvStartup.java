@@ -69,7 +69,7 @@ public class NamesrvStartup {
                 return null;
             }
 
-            final NamesrvConfig namesrvConfig = new NamesrvConfig();
+            final NamesrvConfig namesrvConfig = new NamesrvConfig(); // 解析配置文件，需要填充NamesrvConfig
             final NettyServerConfig nettyServerConfig = new NettyServerConfig();
             nettyServerConfig.setListenPort(9876);
             if (commandLine.hasOption('c')) {
@@ -117,6 +117,7 @@ public class NamesrvStartup {
             // remember all configs to prevent discard
             controller.getConfiguration().registerConfig(properties);
 
+            // 初始化namesrv控制器
             boolean initResult = controller.initialize();
             if (!initResult) {
                 controller.shutdown();
@@ -142,6 +143,7 @@ public class NamesrvStartup {
                 }
             }, "ShutdownHook"));
 
+            // namesrv控制器启动
             controller.start();
 
             String tip = "The Name Server boot success. serializeType=" + RemotingCommand.getSerializeTypeConfigInThisServer();

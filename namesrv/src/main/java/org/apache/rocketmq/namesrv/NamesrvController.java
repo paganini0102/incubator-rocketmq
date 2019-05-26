@@ -72,10 +72,13 @@ public class NamesrvController {
 
     public boolean initialize() {
 
+        // 加载配置
         this.kvConfigManager.load();
 
+        // 初始化netty server
         this.remotingServer = new NettyRemotingServer(this.nettyServerConfig, this.brokerHousekeepingService);
 
+        // 初始化netty执行器8个线程
         this.remotingExecutor =
             Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new ThreadFactoryImpl("RemotingExecutorThread_"));
 
