@@ -446,8 +446,9 @@ public class BrokerController {
             slowTimeMills = rt == null ? 0 : this.messageStore.now() - rt.getCreateTimestamp();
         }
 
-        if (slowTimeMills < 0)
+        if (slowTimeMills < 0) {
             slowTimeMills = 0;
+        }
 
         return slowTimeMills;
     }
@@ -619,6 +620,11 @@ public class BrokerController {
 
         this.registerBrokerAll(true, false);
 
+        /**
+         * Broker启动时想集群中所有的NameServer发送心跳语句，每隔30s向集群中所有NameServer发送心跳包，
+         * NameServer收到Broker心跳爆包时会更新brokerLiveTable缓存中BrokerLiveInfo，如果连续
+         * 120s没有收到心跳包，NameServer将移除该Broker的路由信息同时关闭Socket连接。
+         */
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
