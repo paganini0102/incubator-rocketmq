@@ -121,7 +121,7 @@ public class BrokerOuterAPI {
             for (String namesrvAddr : nameServerAddressList) { // 循环多个 Namesrv
                 try {
                     RegisterBrokerResult result = this.registerBroker(namesrvAddr, clusterName, brokerAddr, brokerName, brokerId,
-                        haServerAddr, topicConfigWrapper, filterServerList, oneway, timeoutMills);
+                            haServerAddr, topicConfigWrapper, filterServerList, oneway, timeoutMills); // 分别向NameServer注册
                     if (result != null) {
                         registerBrokerResult = result;
                     }
@@ -150,16 +150,16 @@ public class BrokerOuterAPI {
     ) throws RemotingCommandException, MQBrokerException, RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException,
         InterruptedException {
         RegisterBrokerRequestHeader requestHeader = new RegisterBrokerRequestHeader();
-        requestHeader.setBrokerAddr(brokerAddr);
-        requestHeader.setBrokerId(brokerId);
-        requestHeader.setBrokerName(brokerName);
-        requestHeader.setClusterName(clusterName);
-        requestHeader.setHaServerAddr(haServerAddr);
+        requestHeader.setBrokerAddr(brokerAddr); // broker地址
+        requestHeader.setBrokerId(brokerId); // brokerId，0：Master；大于0：Slave
+        requestHeader.setBrokerName(brokerName); // broker名称
+        requestHeader.setClusterName(clusterName); // 集群名称
+        requestHeader.setHaServerAddr(haServerAddr); // master地址，初次请求时该值为空，slave向NameServer注册后返回
         RemotingCommand request = RemotingCommand.createRequestCommand(RequestCode.REGISTER_BROKER, requestHeader);
 
         RegisterBrokerBody requestBody = new RegisterBrokerBody();
-        requestBody.setTopicConfigSerializeWrapper(topicConfigWrapper);
-        requestBody.setFilterServerList(filterServerList);
+        requestBody.setTopicConfigSerializeWrapper(topicConfigWrapper); // 主题配置
+        requestBody.setFilterServerList(filterServerList); // 消息过滤服务器列表
         request.setBody(requestBody.encode());
 
         if (oneway) {
