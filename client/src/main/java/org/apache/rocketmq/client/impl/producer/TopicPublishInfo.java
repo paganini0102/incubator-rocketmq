@@ -37,11 +37,11 @@ public class TopicPublishInfo {
      */
     private boolean haveTopicRouterInfo = false;
     /**
-     * 消息队列数组
+     * 该主题的消息队列数组
      */
     private List<MessageQueue> messageQueueList = new ArrayList<MessageQueue>();
     /**
-     * 线程变量（Index）
+     * 线程变量（Index），每选择一次消息队列，该值会自增1，如果Integer.MAX_VALUE，则重置为0，用于选择消息对了
      */
     private volatile ThreadLocalIndex sendWhichQueue = new ThreadLocalIndex();
     /**
@@ -102,8 +102,9 @@ public class TopicPublishInfo {
             int index = this.sendWhichQueue.getAndIncrement();
             for (int i = 0; i < this.messageQueueList.size(); i++) {
                 int pos = Math.abs(index++) % this.messageQueueList.size();
-                if (pos < 0)
+                if (pos < 0) {
                     pos = 0;
+                }
                 MessageQueue mq = this.messageQueueList.get(pos);
                 if (!mq.getBrokerName().equals(lastBrokerName)) {
                     return mq;
@@ -116,8 +117,9 @@ public class TopicPublishInfo {
     public MessageQueue selectOneMessageQueue() {
         int index = this.sendWhichQueue.getAndIncrement();
         int pos = Math.abs(index) % this.messageQueueList.size();
-        if (pos < 0)
+        if (pos < 0) {
             pos = 0;
+        }
         return this.messageQueueList.get(pos);
     }
 

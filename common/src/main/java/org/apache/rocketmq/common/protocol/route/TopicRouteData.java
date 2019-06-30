@@ -37,11 +37,11 @@ public class TopicRouteData extends RemotingSerializable {
      */
     private String orderTopicConf;
     /**
-     * 队列数组数据
+     * Topic队列元数据的数组
      */
     private List<QueueData> queueDatas;
     /**
-     * Broker数组数据
+     * Topic分布的Broker元数据的数组
      */
     private List<BrokerData> brokerDatas;
     /**
@@ -121,33 +121,44 @@ public class TopicRouteData extends RemotingSerializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TopicRouteData other = (TopicRouteData) obj;
         if (brokerDatas == null) {
-            if (other.brokerDatas != null)
+            if (other.brokerDatas != null) {
                 return false;
-        } else if (!brokerDatas.equals(other.brokerDatas))
+            }
+        } else if (!brokerDatas.equals(other.brokerDatas)) {
             return false;
+        }
         if (orderTopicConf == null) {
-            if (other.orderTopicConf != null)
+            if (other.orderTopicConf != null) {
                 return false;
-        } else if (!orderTopicConf.equals(other.orderTopicConf))
+            }
+        } else if (!orderTopicConf.equals(other.orderTopicConf)) {
             return false;
+        }
         if (queueDatas == null) {
-            if (other.queueDatas != null)
+            if (other.queueDatas != null) {
                 return false;
-        } else if (!queueDatas.equals(other.queueDatas))
+            }
+        } else if (!queueDatas.equals(other.queueDatas)) {
             return false;
+        }
         if (filterServerTable == null) {
-            if (other.filterServerTable != null)
+            if (other.filterServerTable != null) {
                 return false;
-        } else if (!filterServerTable.equals(other.filterServerTable))
+            }
+        } else if (!filterServerTable.equals(other.filterServerTable)) {
             return false;
+        }
         return true;
     }
 
