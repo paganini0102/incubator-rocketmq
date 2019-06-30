@@ -641,6 +641,8 @@ public class DefaultMQProducerImpl implements MQProducerInner {
     /**
      * 获取 Topic发布信息
      * 如果获取不到，或者状态不正确，则从 Namesrv获取一次
+     * 如果生产者中缓存了topic的路由信息，如果该路由信息中包含了消息队列，则直接返回该路由信息，
+     * 如果没有缓存或没有包含消息队列，则向NameServer查询该topic的路由信息
      *
      * @param topic Topic
      * @return topic 信息
