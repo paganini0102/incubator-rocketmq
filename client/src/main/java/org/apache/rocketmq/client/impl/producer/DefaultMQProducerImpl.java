@@ -681,12 +681,13 @@ public class DefaultMQProducerImpl implements MQProducerInner {
      * @throws MQBrokerException 当Broker发生异常
      * @throws InterruptedException 当线程被打断
      */
-    private SendResult sendKernelImpl(final Message msg, //
-        final MessageQueue mq, //
-        final CommunicationMode communicationMode, //
-        final SendCallback sendCallback, //
-        final TopicPublishInfo topicPublishInfo, //
-        final long timeout) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
+    private SendResult sendKernelImpl(final Message msg, // 待发送消息
+                                      final MessageQueue mq, // 消息将发送到该消息队列上
+                                      final CommunicationMode communicationMode, // 消息发送模式，SYNC、ASYNC、ONEWAY
+                                      final SendCallback sendCallback, // 异步消息回调函数
+                                      final TopicPublishInfo topicPublishInfo, // 主题路由信息
+                                      final long timeout // 消息发送超时时间
+    ) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
         // 获取 broker地址
         String brokerAddr = this.mQClientFactory.findBrokerAddressInPublish(mq.getBrokerName());
         if (null == brokerAddr) {
