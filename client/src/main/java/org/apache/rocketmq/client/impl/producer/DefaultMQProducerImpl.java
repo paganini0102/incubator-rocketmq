@@ -512,7 +512,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         final SendCallback sendCallback, //
         final long timeout//
     ) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
-        // 校验 Producer 处于运行状态
+        // 校验Producer处于运行状态
         this.makeSureStateOK();
         // 校验消息格式
         Validators.checkMessage(msg, this.defaultMQProducer);
@@ -522,7 +522,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         long beginTimestampPrev = beginTimestampFirst;
         @SuppressWarnings("UnusedAssignment")
         long endTimestamp = beginTimestampFirst;
-        // 获取 Topic路由信息
+        // 获取Topic路由信息
         TopicPublishInfo topicPublishInfo = this.tryToFindTopicPublishInfo(msg.getTopic());
         if (topicPublishInfo != null && topicPublishInfo.ok()) {
             MessageQueue mq = null; // 最后选择消息要发送到的队列
@@ -639,10 +639,10 @@ public class DefaultMQProducerImpl implements MQProducerInner {
     }
 
     /**
-     * 获取 Topic发布信息
-     * 如果获取不到，或者状态不正确，则从 Namesrv获取一次
-     * 如果生产者中缓存了topic的路由信息，如果该路由信息中包含了消息队列，则直接返回该路由信息，
-     * 如果没有缓存或没有包含消息队列，则向NameServer查询该topic的路由信息
+     * 获取Topic发布信息
+     * 如果获取不到，或者状态不正确，则从Namesrv获取一次
+     * 如果生产者中缓存了Topic的路由信息，如果该路由信息中包含了消息队列，则直接返回该路由信息，
+     * 如果没有缓存或没有包含消息队列，则向NameServer查询该Topic的路由信息
      *
      * @param topic Topic
      * @return topic 信息
@@ -659,7 +659,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         // 若获取的Topic发布信息时候可用，则返回
         if (topicPublishInfo.isHaveTopicRouterInfo() || topicPublishInfo.ok()) {
             return topicPublishInfo;
-        } else { // 使用 {@link DefaultMQProducer#createTopicKey} 对应的 Topic发布信息。用于 Topic发布信息不存在 && Broker支持自动创建Topic
+        } else { // 使用 {@link DefaultMQProducer#createTopicKey} 对应的Topic发布信息。用于Topic发布信息不存在并且Broker支持自动创建Topic
             this.mQClientFactory.updateTopicRouteInfoFromNameServer(topic, true, this.defaultMQProducer);
             topicPublishInfo = this.topicPublishInfoTable.get(topic);
             return topicPublishInfo;
