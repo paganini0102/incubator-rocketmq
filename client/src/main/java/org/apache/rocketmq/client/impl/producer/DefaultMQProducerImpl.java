@@ -123,9 +123,9 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             case CREATE_JUST:
                 // 标记初始化失败，这个技巧不错。
                 this.serviceState = ServiceState.START_FAILED;
-
+                // 检查productGroup是否符合要求
                 this.checkConfig();
-
+                // 改变生产者的instanceName为进程ID
                 if (!this.defaultMQProducer.getProducerGroup().equals(MixAll.CLIENT_INNER_PRODUCER_GROUP)) {
                     this.defaultMQProducer.changeInstanceNameToPID();
                 }
@@ -449,7 +449,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
     }
 
     /**
-     * 同步发送消息
+     * 异步发送消息
      *
      * @param msg 消息
      * @param sendCallback 发送回调
