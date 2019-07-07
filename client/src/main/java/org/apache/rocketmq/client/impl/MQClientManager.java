@@ -54,7 +54,9 @@ public class MQClientManager {
     }
 
     /**
-     * 获得 MQClient 对象。如果不存在，则进行创建。
+     * 获得MQClient对象。如果不存在，则进行创建。
+     * 整个JVM实例中只存在一个MQClientManager实例，维护一个MQClientInstance缓存表
+     * 同一个clientId只会创建一个MQClientInstance
      *
      * @param clientConfig client配置
      * @param rpcHook rpcHook

@@ -393,7 +393,7 @@ public class MQClientInstance {
      */
     private void cleanOfflineBroker() {
         try {
-            if (this.lockNamesrv.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS))
+            if (this.lockNamesrv.tryLock(LOCK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)) {
                 try {
                     ConcurrentHashMap<String, HashMap<Long, String>> updatedTable = new ConcurrentHashMap<String, HashMap<Long, String>>();
 
@@ -430,6 +430,7 @@ public class MQClientInstance {
                 } finally {
                     this.lockNamesrv.unlock();
                 }
+            }
         } catch (InterruptedException e) {
             log.warn("cleanOfflineBroker Exception", e);
         }
@@ -497,8 +498,9 @@ public class MQClientInstance {
             for (BrokerData bd : bds) {
                 if (bd.getBrokerAddrs() != null) {
                     boolean exist = bd.getBrokerAddrs().containsValue(addr);
-                    if (exist)
+                    if (exist) {
                         return true;
+                    }
                 }
             }
         }
@@ -527,8 +529,9 @@ public class MQClientInstance {
                     String addr = entry1.getValue();
                     if (addr != null) {
                         if (consumerEmpty) {
-                            if (id != MixAll.MASTER_ID)
+                            if (id != MixAll.MASTER_ID) {
                                 continue;
+                            }
                         }
 
                         try {
@@ -579,8 +582,9 @@ public class MQClientInstance {
     }
 
     /**
-     * 更新单个 Topic 路由信息
-     * 如 isDefault=true && defaultMQProducer!=null 时，使用{@link DefaultMQProducer#createTopicKey}
+     * 更新单个Topic路由信息
+     * 如isDefault为true并且defaultMQProducer不为null时，使用{@link DefaultMQProducer#createTopicKey}
+     * 生产者更新和维护路由缓存
      *
      * @param topic Topic
      * @param isDefault 是否默认
@@ -715,8 +719,9 @@ public class MQClientInstance {
             List<BrokerData> brokerDatas = itNext.getValue().getBrokerDatas();
             for (BrokerData bd : brokerDatas) {
                 boolean contain = bd.getBrokerAddrs().containsValue(brokerAddr);
-                if (contain)
+                if (contain) {
                     return true;
+                }
             }
         }
 
@@ -780,8 +785,9 @@ public class MQClientInstance {
      */
     @SuppressWarnings("SpellCheckingInspection")
     private boolean topicRouteDataIsChange(TopicRouteData olddata, TopicRouteData nowdata) {
-        if (olddata == null || nowdata == null)
+        if (olddata == null || nowdata == null) {
             return true;
+        }
         TopicRouteData old = olddata.cloneTopicRouteData();
         TopicRouteData now = nowdata.cloneTopicRouteData();
         Collections.sort(old.getQueueDatas());
@@ -827,16 +833,19 @@ public class MQClientInstance {
 
     public void shutdown() {
         // Consumer
-        if (!this.consumerTable.isEmpty())
+        if (!this.consumerTable.isEmpty()) {
             return;
+        }
 
         // AdminExt
-        if (!this.adminExtTable.isEmpty())
+        if (!this.adminExtTable.isEmpty()) {
             return;
+        }
 
         // Producer
-        if (this.producerTable.size() > 1)
+        if (this.producerTable.size() > 1) {
             return;
+        }
 
         synchronized (this) {
             switch (this.serviceState) {
