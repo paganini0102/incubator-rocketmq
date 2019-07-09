@@ -659,7 +659,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         // 若获取的Topic发布信息时候可用，则返回
         if (topicPublishInfo.isHaveTopicRouterInfo() || topicPublishInfo.ok()) {
             return topicPublishInfo;
-        } else { // 使用 {@link DefaultMQProducer#createTopicKey} 对应的Topic发布信息。用于Topic发布信息不存在并且Broker支持自动创建Topic
+        } else { // 使用{@link DefaultMQProducer#createTopicKey}对应的Topic发布信息。用于Topic发布信息不存在并且Broker支持自动创建Topic
             this.mQClientFactory.updateTopicRouteInfoFromNameServer(topic, true, this.defaultMQProducer);
             topicPublishInfo = this.topicPublishInfoTable.get(topic);
             return topicPublishInfo;
