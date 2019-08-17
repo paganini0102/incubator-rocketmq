@@ -38,18 +38,19 @@ public class MappedFileQueue {
      */
     private static final int DELETE_FILES_BATCH_MAX = 10;
     /**
-     * 目录
+     * 存储目录
      */
     private final String storePath;
     /**
-     * 每个映射文件大小
+     * 单个文件的存储大小
      */
     private final int mappedFileSize;
     /**
-     * 映射文件数组
+     * MappedFile文件集合
      */
     private final CopyOnWriteArrayList<MappedFile> mappedFiles = new CopyOnWriteArrayList<>();
     /**
+     * 创建MappedFile服务类
      * TODO
      */
     private final AllocateMappedFileService allocateMappedFileService;
