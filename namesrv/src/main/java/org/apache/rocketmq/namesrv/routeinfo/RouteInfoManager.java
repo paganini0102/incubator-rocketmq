@@ -45,26 +45,23 @@ public class RouteInfoManager {
     private final static long BROKER_CHANNEL_EXPIRED_TIME = 1000 * 60 * 2;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     /**
-     * topic 与 队列数据数组 Map
-     * 一个 topic 可以对应 多个Broker
+     * Topic消息队列路由信息，消息发送时根据路由表进行负载均衡。
      */
     private final HashMap<String/* topic */, List<QueueData>> topicQueueTable;
     /**
-     * broker名 与 broker数据 Map
-     * 一个broker名下可以有多个broker，即broker可以同名
-     * TODO 疑问：需要研究下
+     * Broker基础信息，包含brokerName、所属集群群名称、主备Broker地址。
      */
     private final HashMap<String/* brokerName */, BrokerData> brokerAddrTable;
     /**
-     * 集群 与 broker集合 Map
+     * Broker集群信息，存储集群中所有Broker名称。
      */
     private final HashMap<String/* clusterName */, Set<String/* brokerName */>> clusterAddrTable;
     /**
-     * broker地址 与 broker连接信息 Map
+     * Broker状态信息。NameServer每次收到心跳包时会替换该信息。
      */
     private final HashMap<String/* brokerAddr */, BrokerLiveInfo> brokerLiveTable;
     /**
-     * broker地址 与 filtersrv数组 Map
+     * Broker上的FilterServer列表，用于类模式消息过滤。
      */
     private final HashMap<String/* brokerAddr */, List<String>/* Filter Server */> filterServerTable;
 
