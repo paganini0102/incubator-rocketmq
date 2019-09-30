@@ -107,7 +107,7 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
     @Override
     public void start() throws MQClientException {
         switch (this.serviceState) {
-            case CREATE_JUST:
+            case CREATE_JUST: // 服务只启动，不创建
                 this.serviceState = ServiceState.START_FAILED;
 
                 this.defaultMQAdminExt.changeInstanceNameToPID();
