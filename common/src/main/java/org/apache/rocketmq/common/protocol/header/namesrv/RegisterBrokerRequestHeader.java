@@ -47,7 +47,7 @@ public class RegisterBrokerRequestHeader implements CommandCustomHeader {
     private String haServerAddr;
     /**
      * 0：Master；
-     * 大雨0：Slave。
+     * 大于0：Slave。
      */
     @CFNotNull
     private Long brokerId;

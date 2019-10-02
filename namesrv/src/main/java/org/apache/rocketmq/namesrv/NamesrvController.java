@@ -105,12 +105,13 @@ public class NamesrvController {
     }
 
     private void registerProcessor() {
+        // 是否开启集群测试
         if (namesrvConfig.isClusterTest()) {
-
+            // 注册集群测试请求处理器
             this.remotingServer.registerDefaultProcessor(new ClusterTestRequestProcessor(this, namesrvConfig.getProductEnvName()),
                 this.remotingExecutor);
         } else {
-
+            // 注册默认的请求处理器
             this.remotingServer.registerDefaultProcessor(new DefaultRequestProcessor(this), this.remotingExecutor);
         }
     }

@@ -43,6 +43,7 @@ public class ClusterTestRequestProcessor extends DefaultRequestProcessor {
         adminExt.setInstanceName("CLUSTER_TEST_NS_INS_" + productEnvName);
         adminExt.setUnitName(productEnvName);
         try {
+            // 启动消息队列管理服务启动
             adminExt.start();
         } catch (MQClientException e) {
             e.printStackTrace();

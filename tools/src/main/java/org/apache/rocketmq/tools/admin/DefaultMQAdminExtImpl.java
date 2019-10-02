@@ -111,9 +111,9 @@ public class DefaultMQAdminExtImpl implements MQAdminExt, MQAdminExtInner {
                 this.serviceState = ServiceState.START_FAILED;
 
                 this.defaultMQAdminExt.changeInstanceNameToPID();
-
+                // 创建mqclient对象
                 this.mqClientInstance = MQClientManager.getInstance().getAndCreateMQClientInstance(this.defaultMQAdminExt, rpcHook);
-
+                // 注册管理服务处理器
                 boolean registerOK = mqClientInstance.registerAdminExt(this.defaultMQAdminExt.getAdminExtGroup(), this);
                 if (!registerOK) {
                     this.serviceState = ServiceState.CREATE_JUST;
