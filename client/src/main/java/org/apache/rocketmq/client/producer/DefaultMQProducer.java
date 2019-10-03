@@ -183,6 +183,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Fetch message queues of topic <code>topic</code>, to which we may send/publish messages.
+     * 查找该主题下所有的消息队列。
+     *
      * @param topic Topic to fetch.
      * @return List of message queues readily to send messages to
      * @throws MQClientException if there is any client error.
@@ -199,6 +201,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * <strong>Warn:</strong> this method has internal retry-mechanism, that is, internal implementation will retry
      * {@link #retryTimesWhenSendFailed} times before claiming failure. As a result, multiple messages may potentially
      * delivered to broker(s). It's up to the application developers to resolve potential duplication issue.
+     * 同步发送消息，具体发送到主题中的哪个消息队列由负载算法决定。
      *
      * @param msg Message to send.
      * @return {@link SendResult} instance to inform senders details of the deliverable, say Message ID of the message,
@@ -215,6 +218,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Same to {@link #send(Message)} with send timeout specified in addition.
+     * 同步发送消息，如果发送超过timeout则抛出超时异常。
+     *
      * @param msg Message to send.
      * @param timeout send timeout.
      * @return {@link SendResult} instance to inform senders details of the deliverable, say Message ID of the message,
@@ -239,6 +244,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * Similar to {@link #send(Message)}, internal implementation would potentially retry up to
      * {@link #retryTimesWhenSendAsyncFailed} times before claiming sending failure, which may yield message duplication
      * and application developers are the one to resolve this potential issue.
+     * 异步发送消息，sendCallback参数是消息发送成功后的回调方法。
+     *
      * @param msg Message to send.
      * @param sendCallback Callback to execute on sending completed, either successful or unsuccessful.
      * @throws MQClientException if there is any client error.
@@ -491,6 +498,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Search consume queue offset of the given time stamp.
+     * 根据时间戳从队列中查找其偏移量。
+     *
      * @param mq Instance of MessageQueue
      * @param timestamp from when in milliseconds.
      * @return Consume queue offset.
@@ -503,6 +512,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Query maximum offset of the given message queue.
+     * 查找该消息队列中最大的物理偏移量。
      *
      * @param mq Instance of MessageQueue
      * @return maximum offset of the given consume queue.
@@ -515,6 +525,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Query minimum offset of the given message queue.
+     * 查找该消息队列中最小物理偏移量。
+     *
      * @param mq Instance of MessageQueue
      * @return minimum offset of the given message queue.
      * @throws MQClientException if there is any client error.
@@ -537,6 +549,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Query message of the given offset message ID.
+     * 根据消息偏移量查找消息。
+     *
      * @param offsetMsgId message id
      * @return Message specified.
      * @throws MQBrokerException if there is any broker error.
@@ -551,11 +565,13 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Query message by key.
-     * @param topic message topic
-     * @param key message key index word
-     * @param maxNum max message number
-     * @param begin from when
-     * @param end to when
+     * 根据条件查询消息。
+     *
+     * @param topic message topic 消息主题
+     * @param key message key index word 消息索引字段
+     * @param maxNum max message number 本次最多取出消息条数
+     * @param begin from when 开始时间
+     * @param end to when 结束时间
      * @return QueryResult instance contains matched messages.
      * @throws MQClientException if there is any client error.
      * @throws InterruptedException if the thread is interrupted.
