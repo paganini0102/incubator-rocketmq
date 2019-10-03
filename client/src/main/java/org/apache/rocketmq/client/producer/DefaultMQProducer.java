@@ -259,6 +259,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Same to {@link #send(Message, SendCallback)} with send timeout specified in addition.
+     * 异步发送消息，如果发送超过timeout指定的值，则抛出超时异常。
+     *
      * @param msg message to send.
      * @param sendCallback Callback to execute.
      * @param timeout send timeout.
@@ -275,6 +277,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
     /**
      * Similar to <a href="https://en.wikipedia.org/wiki/User_Datagram_Protocol">UDP</a>, this method won't wait for
      * acknowledgement from broker before return. Obviously, it has maximums throughput yet potentials of message loss.
+     * 单向消息发送，就是不在乎发送结果，消息发送出去后该方法立即返回。
+     *
      * @param msg Message to send.
      * @throws MQClientException if there is any client error.
      * @throws RemotingException if there is any network-tier error.
@@ -287,6 +291,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Same to {@link #send(Message)} with target message queue specified in addition.
+     * 同步方式发送消息，发送到指定消息队列。
+     *
      * @param msg Message to send.
      * @param mq Target message queue.
      * @return {@link SendResult} instance to inform senders details of the deliverable, say Message ID of the message,
@@ -323,6 +329,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Same to {@link #send(Message, SendCallback)} with target message queue specified.
+     * 异步方式发送消息，发送到指定消息队列。
      *
      * @param msg Message to send.
      * @param mq Target message queue.
@@ -355,6 +362,8 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      * Same to {@link #sendOneway(Message)} with target message queue specified.
+     * 单向方式发送消息，发送到指定的消息队列。
+     *
      * @param msg Message to send.
      * @param mq Target message queue.
      * @throws MQClientException if there is any client error.
@@ -368,6 +377,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
 
     /**
      *  Same to {@link #send(Message)} with message queue selector specified.
+     *  消息发送，指定消息选择算法，覆盖消息生产者默认的消息队列负载。
      *
      * @param msg Message to send.
      * @param selector Message queue selector, through which we get target message queue to deliver message to.
