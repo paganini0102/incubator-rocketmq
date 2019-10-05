@@ -177,7 +177,7 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
     /**
      * 注册带filtersrv的broker
      *
-     * @param ctx ctx
+     * @param ctx     ctx
      * @param request 注册请求
      * @return 响应
      * @throws RemotingCommandException 解析请求异常
@@ -223,7 +223,7 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
     /**
      * 注册broker
      *
-     * @param ctx ctx
+     * @param ctx     ctx
      * @param request 注册请求
      * @return 响应
      * @throws RemotingCommandException 解析请求异常
@@ -267,7 +267,7 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
     /**
      * 移除注册broker
      *
-     * @param ctx ctx
+     * @param ctx     ctx
      * @param request 移除注册请求
      * @return 响应
      * @throws RemotingCommandException RemotingCommandException 解析请求异常
@@ -289,6 +289,14 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         return response;
     }
 
+    /**
+     * 路由发现
+     *
+     * @param ctx
+     * @param request
+     * @return
+     * @throws RemotingCommandException
+     */
     public RemotingCommand getRouteInfoByTopic(ChannelHandlerContext ctx, RemotingCommand request) throws RemotingCommandException {
         final RemotingCommand response = RemotingCommand.createResponseCommand(null);
         final GetRouteInfoRequestHeader requestHeader =

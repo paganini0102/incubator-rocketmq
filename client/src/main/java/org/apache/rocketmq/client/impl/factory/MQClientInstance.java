@@ -250,17 +250,18 @@ public class MQClientInstance {
                 case CREATE_JUST:
                     this.serviceState = ServiceState.START_FAILED;
                     // If not specified,looking address from name server
+                    // 如果启动的时候命令行没有指定name server的地址，就去获取
                     if (null == this.clientConfig.getNamesrvAddr()) {
-                        this.mQClientAPIImpl.fetchNameServerAddr(); // TODO 待读：获取namesrv，从url
+                        this.mQClientAPIImpl.fetchNameServerAddr(); // 监测连接是否可用
                     }
                     // Start request-response channel
-                    this.mQClientAPIImpl.start();
+                    this.mQClientAPIImpl.start(); // 启动请求响应的channel
                     // Start various schedule tasks
-                    this.startScheduledTask();
+                    this.startScheduledTask(); // 启动调度任务
                     // Start pull service
-                    this.pullMessageService.start(); // TODO 疑问：producer调用这个干啥
+                    this.pullMessageService.start(); // 启动pull服务
                     // Start rebalance service
-                    this.rebalanceService.start(); // TODO 疑问：producer调用这个干啥
+                    this.rebalanceService.start(); // 启动负载均衡服务
                     // Start push service
                     this.defaultMQProducer.getDefaultMQProducerImpl().start(false); // TODO 疑问：为什么这里要调用
                     log.info("the client factory [{}] start OK", this.clientId);
