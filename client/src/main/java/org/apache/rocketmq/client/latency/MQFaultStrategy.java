@@ -47,7 +47,7 @@ public class MQFaultStrategy {
     private long[] notAvailableDuration = {0L, 0L, 30000L, 60000L, 120000L, 180000L, 600000L};
 
     /**
-     * 根据 Topic发布信息 选择一个消息队列
+     * 根据Topic发布信息选择一个消息队列
      *
      * @param tpInfo Topic发布信息
      * @param lastBrokerName brokerName
@@ -63,7 +63,7 @@ public class MQFaultStrategy {
                     if (pos < 0)
                         pos = 0;
                     MessageQueue mq = tpInfo.getMessageQueueList().get(pos);
-                    if (latencyFaultTolerance.isAvailable(mq.getBrokerName())) {
+                    if (latencyFaultTolerance.isAvailable(mq.getBrokerName())) { // 验证该消息队列是否可用
                         if (null == lastBrokerName || mq.getBrokerName().equals(lastBrokerName))
                             return mq;
                     }
