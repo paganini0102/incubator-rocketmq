@@ -27,6 +27,7 @@ public class AppendMessageResult {
     /**
      * Where to start writing
      * PHY OFFSET
+     * 消息的物理偏移量
      */
     private long wroteOffset;
     /**
@@ -41,7 +42,7 @@ public class AppendMessageResult {
     private String msgId;
     /**
      * Message storage timestamp
-     * 存储时间
+     * 消息存储时间戳
      */
     private long storeTimestamp;
     /**

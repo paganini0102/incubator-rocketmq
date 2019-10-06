@@ -604,7 +604,7 @@ public class CommitLog {
 
         // 定时消息处理
         final int tranType = MessageSysFlag.getTransactionValue(msg.getSysFlag());
-        if (tranType == MessageSysFlag.TRANSACTION_NOT_TYPE//
+        if (tranType == MessageSysFlag.TRANSACTION_NOT_TYPE
             || tranType == MessageSysFlag.TRANSACTION_COMMIT_TYPE) {
             // Delay Delivery
             if (msg.getDelayTimeLevel() > 0) {
@@ -612,10 +612,10 @@ public class CommitLog {
                     msg.setDelayTimeLevel(this.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel());
                 }
 
-                // 存储消息时，延迟消息进入 `Topic` 为 `SCHEDULE_TOPIC_XXXX` 。
+                // 存储消息时，延迟消息进入`Topic`为`SCHEDULE_TOPIC_XXXX` 。
                 topic = ScheduleMessageService.SCHEDULE_TOPIC;
 
-                // 延迟级别 与 消息队列编号 做固定映射
+                // 延迟级别与消息队列编号做固定映射
                 queueId = ScheduleMessageService.delayLevel2QueueId(msg.getDelayTimeLevel());
 
                 // Backup real topic, queueId
