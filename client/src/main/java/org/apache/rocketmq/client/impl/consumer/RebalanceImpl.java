@@ -265,7 +265,7 @@ public abstract class RebalanceImpl {
     }
 
     /**
-     * 消费者对 单个Topic 重新进行平衡
+     * 消费者对单个Topic重新进行平衡
      *
      * @param topic Topic
      * @param isOrder 是否顺序
@@ -289,8 +289,9 @@ public abstract class RebalanceImpl {
                 }
                 break;
             }
+            /** 集群模式 */
             case CLUSTERING: {
-                // 获取 topic 对应的 队列 和 consumer信息
+                // 获取topic对应的队列和consumer信息
                 Set<MessageQueue> mqSet = this.topicSubscribeInfoTable.get(topic);
                 List<String> cidAll = this.mQClientFactory.findConsumerIdList(topic, consumerGroup);
                 if (null == mqSet) {
@@ -304,7 +305,7 @@ public abstract class RebalanceImpl {
                 }
 
                 if (mqSet != null && cidAll != null) {
-                    // 排序 消费队列 和 消费者数组。因为是在Client进行分配队列，排序后，各Client的顺序才能保持一致。
+                    // 排序消费队列和消费者数组。因为是在Client进行分配队列，排序后，各Client的顺序才能保持一致。
                     List<MessageQueue> mqAll = new ArrayList<>();
                     mqAll.addAll(mqSet);
 
@@ -313,7 +314,7 @@ public abstract class RebalanceImpl {
 
                     AllocateMessageQueueStrategy strategy = this.allocateMessageQueueStrategy;
 
-                    // 根据 队列分配策略 分配消费队列
+                    // 根据队列分配策略分配消费队列
                     List<MessageQueue> allocateResult;
                     try {
                         allocateResult = strategy.allocate(//
