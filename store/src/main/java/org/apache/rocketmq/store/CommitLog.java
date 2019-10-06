@@ -69,12 +69,12 @@ public class CommitLog {
      */
     private final DefaultMessageStore defaultMessageStore;
     /**
-     * flush commitLog 线程服务
+     * flush commitLog线程服务
      */
     private final FlushCommitLogService flushCommitLogService;
     /**
      * If TransientStorePool enabled, we must flush message to FileChannel at fixed periods
-     * commit commitLog 线程服务
+     * commit commitLog线程服务
      */
     private final FlushCommitLogService commitLogService;
     /**
@@ -82,7 +82,7 @@ public class CommitLog {
      */
     private final AppendMessageCallback appendMessageCallback;
     /**
-     * topic消息队列 与 offset 的Map
+     * topic消息队列与offset的Map
      */
     private HashMap<String/* topic-queue_id */, Long/* offset */> topicQueueTable = new HashMap<>(1024);
     /**
@@ -96,7 +96,7 @@ public class CommitLog {
     private volatile long beginTimeInLock = 0;
     /**
      * true: Can lock, false : in lock.
-     * 添加消息 螺旋锁（通过while循环实现）
+     * 添加消息螺旋锁（通过while循环实现）
      */
     private AtomicBoolean putMessageSpinLock = new AtomicBoolean(true);
     /**
