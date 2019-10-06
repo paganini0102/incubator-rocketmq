@@ -321,6 +321,7 @@ public class DefaultMessageStore implements MessageStore {
         // store是否允许写入
         if (!this.runningFlags.isWriteable()) {
             long value = this.printTimes.getAndIncrement();
+            // 磁盘空间不足
             if ((value % 50000) == 0) {
                 log.warn("message store is not writeable, so putMessage is forbidden " + this.runningFlags.getFlagBits());
             }
@@ -330,7 +331,7 @@ public class DefaultMessageStore implements MessageStore {
             this.printTimes.set(0);
         }
 
-        // 消息过长（超过256个字符）
+        // 消息主题过长（超过256个字符）
         if (msg.getTopic().length() > Byte.MAX_VALUE) {
             log.warn("putMessage message topic length too long " + msg.getTopic().length());
             return new PutMessageResult(PutMessageStatus.MESSAGE_ILLEGAL, null);
