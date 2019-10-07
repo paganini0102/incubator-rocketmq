@@ -77,7 +77,7 @@ public class MappedFile extends ReferenceResource {
      */
     protected int fileSize;
     /**
-     * fileChannel
+     * fileChannel文件通道
      * {@link #file}的channel = new RandomAccessFile(this.file, "rw").getChannel()
      */
     protected FileChannel fileChannel;
@@ -100,11 +100,11 @@ public class MappedFile extends ReferenceResource {
      */
     private long fileFromOffset;
     /**
-     * 文件
+     * 物理文件
      */
     private File file;
     /**
-     * 文件映射Buffer
+     * 物理文件对应的内存映射Buffer
      */
     private MappedByteBuffer mappedByteBuffer;
     /**
