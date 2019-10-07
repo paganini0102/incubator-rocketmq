@@ -208,7 +208,7 @@ public class MappedFile extends ReferenceResource {
      * 初始化fileChannel、mappedByteBuffer
      * @param fileName 文件名
      * @param fileSize 文件大小
-     * @throws IOException 文件不存在 or io异常
+     * @throws IOException 文件不存在或者IO异常
      */
     private void init(final String fileName, final int fileSize) throws IOException {
         this.fileName = fileName;
@@ -320,7 +320,7 @@ public class MappedFile extends ReferenceResource {
                 try {
                     //We only append data to fileChannel or mappedByteBuffer, never both.
                     if (writeBuffer != null || this.fileChannel.position() != 0) {
-                        this.fileChannel.force(false);
+                        this.fileChannel.force(false); // 将内存中的数据持久化到磁盘
                     } else {
                         this.mappedByteBuffer.force();
                     }
@@ -328,7 +328,7 @@ public class MappedFile extends ReferenceResource {
                     log.error("Error occurred when force data to disk.", e);
                 }
 
-                this.flushedPosition.set(value);
+                this.flushedPosition.set(value); // 设置MappedByteBuffer中的写指针
                 this.release();
             } else {
                 log.warn("in flush, hold failed, flush offset = " + this.flushedPosition.get());
