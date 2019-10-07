@@ -1340,45 +1340,45 @@ public class CommitLog {
 
             // Initialization of storage space
             this.resetByteBuffer(msgStoreItemMemory, msgLen);
-            // 1 TOTAL_SIZE
+            // 1、TOTAL_SIZE：该消息条目总长度，4字节。
             this.msgStoreItemMemory.putInt(msgLen);
-            // 2 MAGIC_CODE
+            // 2、MAGIC_CODE：魔数，4字节。固定值0xdaa320a7
             this.msgStoreItemMemory.putInt(CommitLog.MESSAGE_MAGIC_CODE);
-            // 3 BODY_CRC
+            // 3、BODY_CRC：消息体crc校验码，4字节。
             this.msgStoreItemMemory.putInt(msgInner.getBodyCRC());
-            // 4 QUEUE_ID
+            // 4、QUEUE_ID：消息消费队列ID，4字节。
             this.msgStoreItemMemory.putInt(msgInner.getQueueId());
-            // 5 FLAG
+            // 5、FLAG：消息FLAG，RocketMQ不做处理，供应用程序使用，默认4字节。
             this.msgStoreItemMemory.putInt(msgInner.getFlag());
-            // 6 QUEUE_OFFSET
+            // 6、QUEUE_OFFSET：消息在消息消费队列的偏移量，8字节。
             this.msgStoreItemMemory.putLong(queueOffset);
-            // 7 PHYSICAL_OFFSET
+            // 7、PHYSICAL_OFFSET：消息在CommitLog文件中的偏移量，8字节。
             this.msgStoreItemMemory.putLong(fileFromOffset + byteBuffer.position());
-            // 8 SYS_FLAG
+            // 8、SYS_FLAG：消息系统Flag，例如是否压缩、是否是事务消息等，4字节。
             this.msgStoreItemMemory.putInt(msgInner.getSysFlag());
-            // 9 BORN_TIMESTAMP
+            // 9、BORN_TIMESTAMP：消息生产者调用消息发送API的时间戳，8字节。
             this.msgStoreItemMemory.putLong(msgInner.getBornTimestamp());
-            // 10 BORN_HOST
+            // 10、BORN_HOST：消息发送者IP、端口号，8字节。
             this.resetByteBuffer(hostHolder, 8);
             this.msgStoreItemMemory.put(msgInner.getBornHostBytes(hostHolder));
-            // 11 STORE_TIMESTAMP
+            // 11、STORE_TIMESTAMP：消息存储时间戳，8字节。
             this.msgStoreItemMemory.putLong(msgInner.getStoreTimestamp());
-            // 12 STORE_HOST_ADDRESS
+            // 12、STORE_HOST_ADDRESS：Broker服务器IP + 端口号，8字节。
             this.resetByteBuffer(hostHolder, 8);
             this.msgStoreItemMemory.put(msgInner.getStoreHostBytes(hostHolder));
             //this.msgStoreItemMemory.put(msgInner.getStoreHostBytes());
-            // 13 RECONSUME_TIMES
+            // 13、RECONSUME_TIMES：消息重试次数，4字节。
             this.msgStoreItemMemory.putInt(msgInner.getReconsumeTimes());
-            // 14 Prepared Transaction Offset
+            // 14、Prepared Transaction Offset：事务消息物理偏移量，8字节。
             this.msgStoreItemMemory.putLong(msgInner.getPreparedTransactionOffset());
-            // 15 BODY
+            // 15、BODY：消息体内容，长度为bodyLength中存储的值。
             this.msgStoreItemMemory.putInt(bodyLength);
             if (bodyLength > 0)
                 this.msgStoreItemMemory.put(msgInner.getBody());
-            // 16 TOPIC
+            // 16、TOPIC：主题，长度为TopicLength中存储的值。
             this.msgStoreItemMemory.put((byte) topicLength);
             this.msgStoreItemMemory.put(topicData);
-            // 17 PROPERTIES
+            // 17、PROPERTIES：消息属性，长度为PropertiesLength中存储的值。
             this.msgStoreItemMemory.putShort((short) propertiesLength);
             if (propertiesLength > 0)
                 this.msgStoreItemMemory.put(propertiesData);
