@@ -308,6 +308,7 @@ public class MappedFile extends ReferenceResource {
 
     /**
      * flush
+     * 刷写磁盘
      *
      * @param flushLeastPages flush最小页数
      * @return The current flushed position
@@ -315,7 +316,7 @@ public class MappedFile extends ReferenceResource {
     public int flush(final int flushLeastPages) {
         if (this.isAbleToFlush(flushLeastPages)) {
             if (this.hold()) {
-                int value = getReadPosition();
+                int value = getReadPosition(); // 获取MappedFile最大读指针
 
                 try {
                     //We only append data to fileChannel or mappedByteBuffer, never both.
