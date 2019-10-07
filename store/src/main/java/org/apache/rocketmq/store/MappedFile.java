@@ -380,7 +380,9 @@ public class MappedFile extends ReferenceResource {
             try {
                 // 设置需要写入的byteBuffer
                 ByteBuffer byteBuffer = writeBuffer.slice();
+                // 将新创建的position回退到上一次提交的位置（committedPosition）
                 byteBuffer.position(lastCommittedPosition);
+                // 设置limit为wrotePosition的数据复制（写入）到FileChannel中，然后更新committedPosition指针为wrotePosition
                 byteBuffer.limit(writePos);
                 // 写入fileChannel
                 this.fileChannel.position(lastCommittedPosition);
