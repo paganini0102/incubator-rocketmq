@@ -39,6 +39,7 @@ public class NettyDecoder extends LengthFieldBasedFrameDecoder {
     public Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         ByteBuf frame = null;
         try {
+            // 这里通过netty LengthFieldBasedFrameDecoder解决粘包问题，可以方便在消息头中定义一些规则，根据一定的规则进行解码，比如总消息长度、编解码方式
             frame = (ByteBuf) super.decode(ctx, in);
             if (null == frame) {
                 return null;

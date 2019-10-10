@@ -38,12 +38,13 @@ public class RocketMQSerializable {
         byte[] extFieldsBytes = null;
         int extLen = 0;
         if (cmd.getExtFields() != null && !cmd.getExtFields().isEmpty()) {
+            //  map形式的参数序列化
             extFieldsBytes = mapSerialize(cmd.getExtFields());
             extLen = extFieldsBytes.length;
         }
-
+        // 计算总长
         int totalLen = calTotalLen(remarkLen, extLen);
-
+        // 分配缓冲区
         ByteBuffer headerBuffer = ByteBuffer.allocate(totalLen);
         // int code(~32767)
         headerBuffer.putShort((short) cmd.getCode());
