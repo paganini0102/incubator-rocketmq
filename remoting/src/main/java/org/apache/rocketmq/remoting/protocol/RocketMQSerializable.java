@@ -136,6 +136,7 @@ public class RocketMQSerializable {
 
     public static RemotingCommand rocketMQProtocolDecode(final byte[] headerArray) {
         RemotingCommand cmd = new RemotingCommand();
+        // 把消息头byte数组包装成缓冲区
         ByteBuffer headerBuffer = ByteBuffer.wrap(headerArray);
         // int code(~32767)
         cmd.setCode(headerBuffer.getShort());
@@ -160,6 +161,7 @@ public class RocketMQSerializable {
         if (extFieldsLength > 0) {
             byte[] extFieldsBytes = new byte[extFieldsLength];
             headerBuffer.get(extFieldsBytes);
+            // map形式数据反序列化
             cmd.setExtFields(mapDeserialize(extFieldsBytes));
         }
         return cmd;
