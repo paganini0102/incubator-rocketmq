@@ -63,7 +63,7 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
                     RemotingHelper.parseChannelRemoteAddr(ctx.channel()),
                     request);
         }
-
+        // Broker注册请求
         switch (request.getCode()) {
             // TODO 待读（暂时跳过）：kv增删改查
             case RequestCode.PUT_KV_CONFIG:
@@ -72,25 +72,28 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
                 return this.getKVConfig(ctx, request);
             case RequestCode.DELETE_KV_CONFIG:
                 return this.deleteKVConfig(ctx, request);
-
-            case RequestCode.REGISTER_BROKER: // 注册Broker
+            // 注册Broker
+            case RequestCode.REGISTER_BROKER:
                 Version brokerVersion = MQVersion.value2Version(request.getVersion());
                 if (brokerVersion.ordinal() >= MQVersion.Version.V3_0_11.ordinal()) {
                     return this.registerBrokerWithFilterServer(ctx, request);
                 } else {
                     return this.registerBroker(ctx, request);
                 }
-            case RequestCode.UNREGISTER_BROKER: // 移除注册Broker
+            // 移除注册Broker
+            case RequestCode.UNREGISTER_BROKER:
                 return this.unregisterBroker(ctx, request);
+            // 根据Topic获取Broker路由信息
             case RequestCode.GET_ROUTEINTO_BY_TOPIC:
                 return this.getRouteInfoByTopic(ctx, request);
             case RequestCode.GET_BROKER_CLUSTER_INFO:
                 return this.getBrokerClusterInfo(ctx, request);
-
             case RequestCode.WIPE_WRITE_PERM_OF_BROKER:
                 return this.wipeWritePermOfBroker(ctx, request);
+            // 获取所有Topic信息
             case RequestCode.GET_ALL_TOPIC_LIST_FROM_NAMESERVER:
                 return getAllTopicListFromNameserver(ctx, request);
+            // 删除Topic
             case RequestCode.DELETE_TOPIC_IN_NAMESRV:
                 return deleteTopicInNamesrv(ctx, request);
             case RequestCode.GET_KVLIST_BY_NAMESPACE:
@@ -190,14 +193,14 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
                 (RegisterBrokerRequestHeader) request.decodeCommandCustomHeader(RegisterBrokerRequestHeader.class);
 
         RegisterBrokerBody registerBrokerBody = new RegisterBrokerBody();
-
+        // decode request body，如果body已压缩，则先解压。如果body为空，会将Topic的版本号默认置为0。
         if (request.getBody() != null) {
             registerBrokerBody = RegisterBrokerBody.decode(request.getBody(), RegisterBrokerBody.class);
         } else {
             registerBrokerBody.getTopicConfigSerializeWrapper().getDataVersion().setCounter(new AtomicLong(0));
             registerBrokerBody.getTopicConfigSerializeWrapper().getDataVersion().setTimestamp(0);
         }
-
+        // 使用Broker上报的信息更新Nameserv的RouteInfo
         RegisterBrokerResult result = this.namesrvController.getRouteInfoManager().registerBroker(
                 requestHeader.getClusterName(),
                 requestHeader.getBrokerAddr(),
@@ -301,9 +304,9 @@ public class DefaultRequestProcessor implements NettyRequestProcessor {
         final RemotingCommand response = RemotingCommand.createResponseCommand(null);
         final GetRouteInfoRequestHeader requestHeader =
                 (GetRouteInfoRequestHeader) request.decodeCommandCustomHeader(GetRouteInfoRequestHeader.class);
-
+        // 从RouteInfoManager中获取topic的路由信息
         TopicRouteData topicRouteData = this.namesrvController.getRouteInfoManager().pickupTopicRouteData(requestHeader.getTopic());
-
+        // 如果支持顺序消息，则填充KVConfig信息
         if (topicRouteData != null) {
             if (this.namesrvController.getNamesrvConfig().isOrderMessageEnable()) {
                 String orderTopicConf =

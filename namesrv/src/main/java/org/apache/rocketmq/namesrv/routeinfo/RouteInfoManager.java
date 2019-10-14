@@ -111,7 +111,7 @@ public class RouteInfoManager {
     }
 
     /**
-     * broker 注册
+     * Broker注册
      *
      * @param clusterName 集群名
      * @param brokerAddr broker地址
@@ -146,8 +146,9 @@ public class RouteInfoManager {
                 }
                 brokerNames.add(brokerName);
 
-                // 更新broker信息
+                // 更新Broker信息
                 boolean registerFirst = false;
+                // 更新BrokerName和BrokerData的Map
                 BrokerData brokerData = this.brokerAddrTable.get(brokerName);
                 if (null == brokerData) {
                     registerFirst = true;
@@ -161,8 +162,8 @@ public class RouteInfoManager {
                 String oldAddr = brokerData.getBrokerAddrs().put(brokerId, brokerAddr);
                 registerFirst = registerFirst || (null == oldAddr);
 
-                // 更新topic信息
-                if (null != topicConfigWrapper //
+                // 如果是Master Broker，第一次注册或者是Topic信息发生变化了，更新TopicQueueTable
+                if (null != topicConfigWrapper
                     && MixAll.MASTER_ID == brokerId) {
                     if (this.isBrokerTopicConfigChanged(brokerAddr, topicConfigWrapper.getDataVersion())//
                         || registerFirst) {
@@ -176,7 +177,7 @@ public class RouteInfoManager {
                     }
                 }
 
-                // 更新broker连接信息
+                // 更新Broker的心跳时间，更新Broker连接信息
                 BrokerLiveInfo prevBrokerLiveInfo = this.brokerLiveTable.put(brokerAddr,
                     new BrokerLiveInfo(
                         System.currentTimeMillis(),
@@ -427,7 +428,9 @@ public class RouteInfoManager {
 
         try {
             try {
+                // 获取读锁
                 this.lock.readLock().lockInterruptibly();
+                // 获取所有支持该Topic的Broker的Queue配置
                 List<QueueData> queueDataList = this.topicQueueTable.get(topic);
                 if (queueDataList != null) {
                     topicRouteData.setQueueDatas(queueDataList);
@@ -440,6 +443,7 @@ public class RouteInfoManager {
                     }
 
                     for (String brokerName : brokerNameSet) {
+                        // 根据BrokerName获取Broker主从地址信息
                         BrokerData brokerData = this.brokerAddrTable.get(brokerName);
                         if (null != brokerData) {
                             BrokerData brokerDataClone = new BrokerData();
