@@ -479,7 +479,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
     }
 
     /**
-     * 更新 Broker 延迟信息
+     * 更新Broker延迟信息
      *
      * @param brokerName brokerName
      * @param currentLatency 延迟
@@ -506,18 +506,18 @@ public class DefaultMQProducerImpl implements MQProducerInner {
      * @throws MQBrokerException 当Broker发生异常
      * @throws InterruptedException 当线程被打断
      */
-    private SendResult sendDefaultImpl(//
-        Message msg, //
-        final CommunicationMode communicationMode, //
-        final SendCallback sendCallback, //
-        final long timeout//
+    private SendResult sendDefaultImpl(
+        Message msg,
+        final CommunicationMode communicationMode,
+        final SendCallback sendCallback,
+        final long timeout
     ) throws MQClientException, RemotingException, MQBrokerException, InterruptedException {
         // 校验Producer处于运行状态
         this.makeSureStateOK();
         // 校验消息格式
         Validators.checkMessage(msg, this.defaultMQProducer);
-        //
-        final long invokeID = random.nextLong(); // 调用编号；用于下面打印日志，标记为同一次发送消息
+        // 调用编号；用于下面打印日志，标记为同一次发送消息
+        final long invokeID = random.nextLong();
         long beginTimestampFirst = System.currentTimeMillis();
         long beginTimestampPrev = beginTimestampFirst;
         @SuppressWarnings("UnusedAssignment")
@@ -530,12 +530,12 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             SendResult sendResult = null; // 最后一次发送结果
             int timesTotal = communicationMode == CommunicationMode.SYNC ? 1 + this.defaultMQProducer.getRetryTimesWhenSendFailed() : 1; // 同步多次调用
             int times = 0; // 第几次发送
-            String[] brokersSent = new String[timesTotal]; // 存储每次发送消息选择的broker名
+            String[] brokersSent = new String[timesTotal]; // 存储每次发送消息选择的Broker名
             // 循环调用发送消息，直到成功
             for (; times < timesTotal; times++) {
                 String lastBrokerName = null == mq ? null : mq.getBrokerName();
                 @SuppressWarnings("SpellCheckingInspection")
-                MessageQueue tmpmq = this.selectOneMessageQueue(topicPublishInfo, lastBrokerName); // 选择消息要发送到的队列
+                MessageQueue tmpmq = this.selectOneMessageQueue(topicPublishInfo, lastBrokerName); // 从所有Topic可用Queue中选择消息要发送到的队列
                 if (tmpmq != null) {
                     mq = tmpmq;
                     brokersSent[times] = mq.getBrokerName();
@@ -544,13 +544,15 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                         // 调用发送消息核心方法
                         sendResult = this.sendKernelImpl(msg, mq, communicationMode, sendCallback, topicPublishInfo, timeout);
                         endTimestamp = System.currentTimeMillis();
-                        // 更新Broker可用性信息
+                        // 更新Broker可用性信息MQFaultStrategy中
                         this.updateFaultItem(mq.getBrokerName(), endTimestamp - beginTimestampPrev, false);
                         switch (communicationMode) {
+                            // 异步和ONEWAY调用后就直接返回
                             case ASYNC:
                                 return null;
                             case ONEWAY:
                                 return null;
+                            // 如果Broker存储失败，判断是否要重试
                             case SYNC:
                                 if (sendResult.getSendStatus() != SendStatus.SEND_OK) {
                                     if (this.defaultMQProducer.isRetryAnotherBrokerWhenNotStoreOK()) { // 同步发送成功但存储有问题时 && 配置存储异常时重新发送开关 时，进行重试

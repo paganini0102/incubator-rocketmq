@@ -263,7 +263,7 @@ public class MQClientInstance {
                     // Start rebalance service
                     this.rebalanceService.start(); // 启动负载均衡服务
                     // Start push service
-                    this.defaultMQProducer.getDefaultMQProducerImpl().start(false); // TODO 疑问：为什么这里要调用
+                    this.defaultMQProducer.getDefaultMQProducerImpl().start(false); // 启动Client内置的producer
                     log.info("the client factory [{}] start OK", this.clientId);
                     this.serviceState = ServiceState.RUNNING;
                     break;
