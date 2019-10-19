@@ -33,9 +33,11 @@ import sun.nio.ch.DirectBuffer;
  */
 public class TransientStorePool {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
-
+    /** avaliableBuffers个数，可以通过在broker中配置文件中设置TransientStorePool，默认为5 */
     private final int poolSize;
+    /** 每个ByteBuffer大小，默认为mapedFileSizeCommitLog，表明TransientStorePool为commitlog文件服务 */
     private final int fileSize;
+    /** ByteBuffer容器，双端队列 */
     private final Deque<ByteBuffer> availableBuffers;
     private final MessageStoreConfig storeConfig;
 
