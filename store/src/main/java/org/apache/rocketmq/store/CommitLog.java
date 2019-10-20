@@ -802,7 +802,7 @@ public class CommitLog {
     }
 
     /**
-     * TODO
+     * 根据偏移量与消息长度查找消息。
      * @param offset
      * @param size
      * @return
