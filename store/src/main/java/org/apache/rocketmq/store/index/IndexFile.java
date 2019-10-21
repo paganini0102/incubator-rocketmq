@@ -37,6 +37,7 @@ public class IndexFile {
     private final MappedFile mappedFile;
     private final FileChannel fileChannel;
     private final MappedByteBuffer mappedByteBuffer;
+    /** 记录该IndexFile的统计信息，包含40个字节 */
     private final IndexHeader indexHeader;
 
     public IndexFile(final String fileName, final int hashSlotNum, final int indexNum,
