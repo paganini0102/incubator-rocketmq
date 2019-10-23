@@ -47,13 +47,14 @@ public class MQFaultStrategy {
     private long[] notAvailableDuration = {0L, 0L, 30000L, 60000L, 120000L, 180000L, 600000L};
 
     /**
-     * 根据Topic发布信息选择一个消息队列
+     * MQFaultStrategy的方法实现，根据Topic发布信息选择一个消息队列
      *
      * @param tpInfo Topic发布信息
      * @param lastBrokerName brokerName
      * @return 消息队列
      */
     public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final String lastBrokerName) {
+        // 开启了延时容错
         if (this.sendLatencyFaultEnable) {
             try {
                 // 获取 brokerName=lastBrokerName && 可用的一个消息队列

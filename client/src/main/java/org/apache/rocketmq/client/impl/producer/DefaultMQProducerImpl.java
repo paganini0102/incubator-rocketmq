@@ -475,6 +475,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
      * @return 消息队列
      */
     public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final String lastBrokerName) {
+        // 直接调用MQFaultStrategy的方法
         return this.mqFaultStrategy.selectOneMessageQueue(tpInfo, lastBrokerName);
     }
 

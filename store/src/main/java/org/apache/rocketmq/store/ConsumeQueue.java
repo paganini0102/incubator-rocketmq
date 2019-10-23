@@ -151,6 +151,11 @@ public class ConsumeQueue {
         }
     }
 
+    /**
+     * 首先根据时间戳定位到物理文件，从第一个文件开始找到第一个文件更新时间大于该时间戳的文件
+     * @param timestamp
+     * @return
+     */
     public long getOffsetInQueueByTime(final long timestamp) {
         MappedFile mappedFile = this.mappedFileQueue.getMappedFileByTime(timestamp);
         if (mappedFile != null) {
@@ -167,6 +172,7 @@ public class ConsumeQueue {
                 ByteBuffer byteBuffer = sbr.getByteBuffer();
                 high = byteBuffer.limit() - CQ_STORE_UNIT_SIZE;
                 try {
+                    // 采用二分查找来加速检索
                     while (high >= low) {
                         midOffset = (low + high) / (2 * CQ_STORE_UNIT_SIZE) * CQ_STORE_UNIT_SIZE;
                         byteBuffer.position(midOffset);
