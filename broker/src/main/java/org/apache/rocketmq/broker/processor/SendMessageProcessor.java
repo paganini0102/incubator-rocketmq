@@ -275,7 +275,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         final SendMessageContext sendMessageContext, //
         final SendMessageRequestHeader requestHeader) throws RemotingCommandException {
 
-        // 初始化响应
+        // 1、构建Response的Header，初始化响应
         final RemotingCommand response = RemotingCommand.createResponseCommand(SendMessageResponseHeader.class);
         final SendMessageResponseHeader responseHeader = (SendMessageResponseHeader) response.readCustomHeader();
         response.setOpaque(request.getOpaque());
@@ -286,7 +286,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             log.debug("receive SendMessage request command, {}", request);
         }
 
-        // 如果未开始接收消息，抛出系统异常
+        // 2、判断当前时间broker是否提供服务，不提供则返回code为SYSTEM_ERROR的response
         @SuppressWarnings("SpellCheckingInspection")
         final long startTimstamp = this.brokerController.getBrokerConfig().getStartAcceptSendRequestTimeStamp();
         if (this.brokerController.getMessageStore().now() < startTimstamp) {
@@ -297,6 +297,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
 
         // 消息配置(Topic配置）校验
         response.setCode(-1);
+        // 3、检查topic和queue，如果不存在且broker设置中允许自动创建，则自动创建
         super.msgCheck(ctx, requestHeader, response);
         if (response.getCode() != -1) {
             return response;
@@ -306,7 +307,9 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
 
         // 如果队列小于0，从可用队列随机选择
         int queueIdInt = requestHeader.getQueueId();
+        // 4、获取topic的配置
         TopicConfig topicConfig = this.brokerController.getTopicConfigManager().selectTopicConfig(requestHeader.getTopic());
+        // 5、如果消息中的queueId小于0，则随机选取一个queue
         if (queueIdInt < 0) {
             queueIdInt = Math.abs(this.random.nextInt() % 99999999) % topicConfig.getWriteQueueNums();
         }
@@ -350,7 +353,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             }
         }
 
-        // 创建MessageExtBrokerInner
+        // 6、重新封装request中的message成MessageExtBrokerInner
         MessageExtBrokerInner msgInner = new MessageExtBrokerInner();
         msgInner.setTopic(newTopic);
         msgInner.setBody(body);
@@ -368,6 +371,7 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
         // 校验是否不允许发送事务消息
         if (this.brokerController.getBrokerConfig().isRejectTransactionMessage()) {
             String traFlag = msgInner.getProperty(MessageConst.PROPERTY_TRANSACTION_PREPARED);
+            // 如果是事务消息
             if (traFlag != null) {
                 response.setCode(ResponseCode.NO_PERMISSION);
                 response.setRemark(
@@ -376,8 +380,9 @@ public class SendMessageProcessor extends AbstractSendMessageProcessor implement
             }
         }
 
-        // 添加消息
+        // 8、调用MessageStore接口存储消息
         PutMessageResult putMessageResult = this.brokerController.getMessageStore().putMessage(msgInner);
+        // 9、根据putResult设置repsonse状态，更新broker统计信息，成功则回复producer，更新context上下文
         if (putMessageResult != null) {
             boolean sendOK = false;
 
