@@ -589,9 +589,9 @@ public class CommitLog {
      * @return 结果
      */
     public PutMessageResult putMessage(final MessageExtBrokerInner msg) {
-        // Set the storage time
+        // 1、Set the storage time
         msg.setStoreTimestamp(System.currentTimeMillis());
-        // Set the message body BODY CRC (consider the most appropriate setting
+        // 2、Set the message body BODY CRC (consider the most appropriate setting
         // on the client)
         msg.setBodyCRC(UtilAll.crc32(msg.getBody()));
         // Back to Results
@@ -604,10 +604,12 @@ public class CommitLog {
 
         // 定时消息处理
         final int tranType = MessageSysFlag.getTransactionValue(msg.getSysFlag());
+        // 非事务消息
         if (tranType == MessageSysFlag.TRANSACTION_NOT_TYPE
             || tranType == MessageSysFlag.TRANSACTION_COMMIT_TYPE) {
             // Delay Delivery
             if (msg.getDelayTimeLevel() > 0) {
+                // 3、延时投放消息，变更topic
                 if (msg.getDelayTimeLevel() > this.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel()) {
                     msg.setDelayTimeLevel(this.defaultMessageStore.getScheduleMessageService().getMaxDelayLevel());
                 }
@@ -630,11 +632,11 @@ public class CommitLog {
 
         long eclipseTimeInLock = 0;
 
-        // 获取写入映射文件
         MappedFile unlockMappedFile = null;
+        // 4、获取当前正在写入的映射文件
         MappedFile mappedFile = this.mappedFileQueue.getLastMappedFile();
 
-        // 获取写入锁
+        // 5、获取写message的锁
         lockForPutMessage(); //spin...
         try {
             long beginLockTimestamp = this.defaultMessageStore.getSystemClock().now();
@@ -644,7 +646,7 @@ public class CommitLog {
             // global
             msg.setStoreTimestamp(beginLockTimestamp);
 
-            // 当不存在映射文件时，进行创建
+            // 6、新建一个mapp file如果文件不存在或者文件已经写满
             if (null == mappedFile || mappedFile.isFull()) {
                 mappedFile = this.mappedFileQueue.getLastMappedFile(0); // Mark: NewFile may be cause noise
             }
@@ -654,12 +656,13 @@ public class CommitLog {
                 return new PutMessageResult(PutMessageStatus.CREATE_MAPEDFILE_FAILED, null);
             }
 
-            // 存储消息
+            // 7、存储消息
             result = mappedFile.appendMessage(msg, this.appendMessageCallback);
             switch (result.getStatus()) {
                 case PUT_OK:
                     break;
                 case END_OF_FILE: // 当文件尾时，获取新的映射文件，并进行插入
+                    // 8、如果文件已满，则新建一个文件继续
                     unlockMappedFile = mappedFile;
                     // Create a new file, re-write the message
                     mappedFile = this.mappedFileQueue.getLastMappedFile(0);
@@ -686,15 +689,16 @@ public class CommitLog {
             eclipseTimeInLock = this.defaultMessageStore.getSystemClock().now() - beginLockTimestamp;
             beginTimeInLock = 0;
         } finally {
-            // 释放写入锁
+            // 9、释放第5步中获取到的锁
             releasePutMessageLock();
         }
 
+        // 写消息时间过长
         if (eclipseTimeInLock > 500) {
             log.warn("[NOTIFYME]putMessage in lock cost time(ms)={}, bodyLength={} AppendMessageResult={}", eclipseTimeInLock, msg.getBody().length, result);
         }
 
-        // TODO 待读：
+        // unlock已经写满的文件，释放内存锁
         if (null != unlockMappedFile && this.defaultMessageStore.getMessageStoreConfig().isWarmMapedFileEnable()) {
             this.defaultMessageStore.unlockMappedFile(unlockMappedFile);
         }
