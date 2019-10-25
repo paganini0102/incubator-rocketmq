@@ -712,6 +712,7 @@ public class CommitLog {
         // 进行同步||异步 flush||commit
         GroupCommitRequest request = null;
         // Synchronization flush
+        // 10、flush数据到磁盘，分同步和异步
         if (FlushDiskType.SYNC_FLUSH == this.defaultMessageStore.getMessageStoreConfig().getFlushDiskType()) {
             final GroupCommitService service = (GroupCommitService) this.flushCommitLogService;
             if (msg.isWaitStoreMsgOK()) {
@@ -737,6 +738,7 @@ public class CommitLog {
         }
 
         // Synchronous write double 如果是同步Master，同步到从节点
+        // 11、如果broker设置成SYNC_MASTER，则等SLAVE接收到数据后才返回（接收到数据是指offset延后没有超过制定的字节数）
         if (BrokerRole.SYNC_MASTER == this.defaultMessageStore.getMessageStoreConfig().getBrokerRole()) {
             HAService service = this.defaultMessageStore.getHaService();
             if (msg.isWaitStoreMsgOK()) {
