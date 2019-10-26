@@ -261,14 +261,17 @@ public class MappedFile extends ReferenceResource {
     public AppendMessageResult appendMessage(final MessageExtBrokerInner msg, final AppendMessageCallback cb) {
         assert msg != null;
         assert cb != null;
-
+        // 1、获取当前的write position
         int currentPos = this.wrotePosition.get();
 
         if (currentPos < this.fileSize) {
+            // 2、生成buffer切片
             ByteBuffer byteBuffer = writeBuffer != null ? writeBuffer.slice() : this.mappedByteBuffer.slice();
             byteBuffer.position(currentPos);
+            // 3、写消息到byteBuffer
             AppendMessageResult result =
                 cb.doAppend(this.getFileFromOffset(), byteBuffer, this.fileSize - currentPos, msg);
+            // 4、更新write position，到最新值
             this.wrotePosition.addAndGet(result.getWroteBytes());
             this.storeTimestamp = result.getStoreTimestamp();
             return result;

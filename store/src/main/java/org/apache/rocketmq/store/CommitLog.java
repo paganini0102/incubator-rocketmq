@@ -1279,34 +1279,39 @@ public class CommitLog {
         public AppendMessageResult doAppend(final long fileFromOffset, final ByteBuffer byteBuffer, final int maxBlank, final MessageExtBrokerInner msgInner) {
             // STORETIMESTAMP + STOREHOSTADDRESS + OFFSET <br>
 
-            // PHY OFFSET
+            // 1、PHY OFFSET，消息偏移
             long wroteOffset = fileFromOffset + byteBuffer.position();
 
             // 计算commitLog里的msgId
-            this.resetByteBuffer(hostHolder, 8);
+            this.resetByteBuffer(hostHolder, 8); // 重置host holder buffer
+            // 2、生成message ID，前8位是host后8位是wroteOffset，目的是便于使用msgID来查找消息
             String msgId = MessageDecoder.createMessageId(this.msgIdMemory, msgInner.getStoreHostBytes(hostHolder), wroteOffset);
 
-            // Record ConsumeQueue information 获取队列offset
+            // 3、Record ConsumeQueue information 获取队列offset
             keyBuilder.setLength(0);
             keyBuilder.append(msgInner.getTopic());
             keyBuilder.append('-');
             keyBuilder.append(msgInner.getQueueId());
             String key = keyBuilder.toString();
+            // 4、取得具体Queue的offset，值是当前是Queue里的第几条消息
             Long queueOffset = CommitLog.this.topicQueueTable.get(key);
             if (null == queueOffset) {
+                // 5、如果是这个queue的第一条消息，需要初始化
                 queueOffset = 0L;
                 CommitLog.this.topicQueueTable.put(key, queueOffset);
             }
 
-            // Transaction messages that require special handling // TODO 疑问：用途
+            // 6、Transaction messages that require special handling
             final int tranType = MessageSysFlag.getTransactionValue(msgInner.getSysFlag());
             switch (tranType) {
                 // Prepared and Rollback message is not consumed, will not enter the
                 // consumer queue
+                // 事务消息
                 case MessageSysFlag.TRANSACTION_PREPARED_TYPE:
                 case MessageSysFlag.TRANSACTION_ROLLBACK_TYPE:
                     queueOffset = 0L;
                     break;
+                // 非事务消息
                 case MessageSysFlag.TRANSACTION_NOT_TYPE:
                 case MessageSysFlag.TRANSACTION_COMMIT_TYPE:
                 default:
