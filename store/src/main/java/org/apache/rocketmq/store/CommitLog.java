@@ -1318,7 +1318,7 @@ public class CommitLog {
                     break;
             }
 
-            // 计算消息长度
+            // Serialize message
             final byte[] propertiesData =
                 msgInner.getPropertiesString() == null ? null : msgInner.getPropertiesString().getBytes(MessageDecoder.CHARSET_UTF8);
             final int propertiesLength = propertiesData == null ? 0 : propertiesData.length;
@@ -1329,6 +1329,7 @@ public class CommitLog {
             final byte[] topicData = msgInner.getTopic().getBytes(MessageDecoder.CHARSET_UTF8);
             final int topicLength = topicData.length;
             final int bodyLength = msgInner.getBody() == null ? 0 : msgInner.getBody().length;
+            // 7、计算消息实际存储长度
             final int msgLen = calMsgLength(bodyLength, topicLength, propertiesLength);
             // Exceeds the maximum message
             if (msgLen > this.maxMessageSize) {
@@ -1338,6 +1339,7 @@ public class CommitLog {
             }
 
             // Determines whether there is sufficient(足够) free space
+            // 8、如果空间不足，magic code设置成EOF，然后剩余字节随机，保证所有文件大小都是FileSize
             if ((msgLen + END_FILE_MIN_BLANK_LENGTH) > maxBlank) {
                 this.resetByteBuffer(this.msgStoreItemMemory, maxBlank);
                 // 1 TOTAL_SIZE
