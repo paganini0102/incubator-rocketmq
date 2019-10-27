@@ -1039,7 +1039,8 @@ public class CommitLog {
     }
 
     /**
-     * 实时 flush commitLog 线程服务
+     * 异步刷盘机制类
+     * 实时flush commitLog线程服务
      */
     class FlushRealTimeService extends FlushCommitLogService {
         /**
@@ -1130,6 +1131,7 @@ public class CommitLog {
     }
 
     /**
+     * 同步刷盘服务类
      * GroupCommit Service
      */
     class GroupCommitService extends FlushCommitLogService {
