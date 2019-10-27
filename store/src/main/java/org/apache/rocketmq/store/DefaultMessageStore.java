@@ -220,24 +220,29 @@ public class DefaultMessageStore implements MessageStore {
      */
     @Override
     public void start() throws Exception {
+        // 启动FlushConsumeQueueService，是一个单线程的服务，定时将consumeQueue文件的数据刷新到磁盘，周期由参数flushIntervalConsumeQueue设置，默认1sec
         this.flushConsumeQueueService.start();
+        // 启动CommitLog
         this.commitLog.start();
+        // 消息存储指标统计服务，RT，TPS...
         this.storeStatsService.start();
 
+        // 针对master，启动延时消息调度服务
         if (this.scheduleMessageService != null && SLAVE != messageStoreConfig.getBrokerRole()) {
             this.scheduleMessageService.start();
         }
-
+        // 启动reputMessageService，该服务负责将CommitLog中的消息offset记录到cosumeQueue文件中
         if (this.getMessageStoreConfig().isDuplicationEnable()) {
             this.reputMessageService.setReputFromOffset(this.commitLog.getConfirmOffset());
         } else {
             this.reputMessageService.setReputFromOffset(this.commitLog.getMaxOffset());
         }
         this.reputMessageService.start();
-
+        // 启动haService，数据主从同步的服务
         this.haService.start();
-
+        // 对于新的broker，初始化文件存储的目录
         this.createTempFile();
+        // 启动定时任务
         this.addScheduleTask();
         this.shutdown = false;
     }

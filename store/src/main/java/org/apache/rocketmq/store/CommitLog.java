@@ -944,6 +944,10 @@ public class CommitLog {
             return nextOffset;
         }
 
+        /**
+         * 唤醒消费发送线程，并将刷盘告知GroupCommitRequest
+         * @param flushOK
+         */
         public void wakeupCustomer(final boolean flushOK) {
             this.flushOK = flushOK;
             this.countDownLatch.countDown();
@@ -1129,11 +1133,11 @@ public class CommitLog {
      */
     class GroupCommitService extends FlushCommitLogService {
         /**
-         * 写入请求队列
+         * 同步刷盘任务暂存容器
          */
         private volatile List<GroupCommitRequest> requestsWrite = new ArrayList<>();
         /**
-         * 读取请求队列
+         * GroupCommitService线程每次处理的request容器
          */
         private volatile List<GroupCommitRequest> requestsRead = new ArrayList<>();
 
