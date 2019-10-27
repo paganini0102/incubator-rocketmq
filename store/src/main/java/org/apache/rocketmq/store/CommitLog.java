@@ -950,7 +950,8 @@ public class CommitLog {
         }
 
         /**
-         * 消费发送线程将消息追加到内存映射文件后，将同步任务GroupCommitRequest提交到GroupCommitService线程，然后调用阻塞等待刷盘结果，超时时间默认为5s
+         * 消费发送线程将消息追加到内存映射文件后，将同步任务GroupCommitRequest提交到
+         * GroupCommitService线程，然后调用阻塞等待刷盘结果，超时时间默认为5s
          * @param timeout
          * @return
          */
