@@ -716,8 +716,10 @@ public class CommitLog {
         if (FlushDiskType.SYNC_FLUSH == this.defaultMessageStore.getMessageStoreConfig().getFlushDiskType()) {
             final GroupCommitService service = (GroupCommitService) this.flushCommitLogService;
             if (msg.isWaitStoreMsgOK()) {
+                // 构建GroupCommitRequest同步任务并提交到GroupCommitRequest
                 request = new GroupCommitRequest(result.getWroteOffset() + result.getWroteBytes());
                 service.putRequest(request);
+                // 等待同步刷盘任务完成，如果超时则返回刷盘错误，刷盘成功后正常返回给调用方
                 boolean flushOK = request.waitForFlush(this.defaultMessageStore.getMessageStoreConfig().getSyncFlushTimeout());
                 if (!flushOK) {
                     log.error("do groupcommit, wait for flush failed, topic: " + msg.getTopic() + " tags: " + msg.getTags()
@@ -927,8 +929,11 @@ public class CommitLog {
     }
 
     public static class GroupCommitRequest {
+        /** 刷盘点偏移量 */
         private final long nextOffset;
+        /** 倒记数锁存器 */
         private final CountDownLatch countDownLatch = new CountDownLatch(1);
+        /** 刷盘结果，初始为false */
         private volatile boolean flushOK = false;
 
         public GroupCommitRequest(long nextOffset) {

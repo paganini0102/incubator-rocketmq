@@ -1766,6 +1766,7 @@ public class DefaultMessageStore implements MessageStore {
         }
 
         private void doReput() {
+            // 1、判断commitLog的maxOffset是否比上次读取的offset大
             for (boolean doNext = true; this.isCommitLogAvailable() && doNext; ) {
 
                 // TODO 疑问：这个是啥
