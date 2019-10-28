@@ -100,12 +100,12 @@ public class MessageStoreConfig {
     private boolean checkCRCOnRecover = true;
     /**
      * How many pages are to be flushed when flush CommitLog
-     * flush commitLog 最小分页
+     * flush commitLog最小分页
      */
     private int flushCommitLogLeastPages = 4;
     /**
      * How many pages are to be committed when commit data to file
-     * commit commitLog 最小分页
+     * commit commitLog最小分页
      */
     private int commitCommitLogLeastPages = 4;
     // Flush page size when the disk in warming state
@@ -113,11 +113,11 @@ public class MessageStoreConfig {
     // How many pages are to be flushed when flush ConsumeQueue
     private int flushConsumeQueueLeastPages = 2;
     /**
-     * flush commitLog 大周期
+     * flush commitLog大周期
      */
     private int flushCommitLogThoroughInterval = 1000 * 10;
     /**
-     * commit commitLog 大周期
+     * commit commitLog大周期
      */
     private int commitCommitLogThoroughInterval = 200;
     private int flushConsumeQueueThoroughInterval = 1000 * 60;
