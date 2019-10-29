@@ -34,7 +34,9 @@ public class HAConnection {
     private final HAService haService;
     private final SocketChannel socketChannel;
     private final String clientAddr;
+    /** 网络写实现类 */
     private WriteSocketService writeSocketService;
+    /** 网络读实现类 */
     private ReadSocketService readSocketService;
 
     private volatile long slaveRequestOffset = -1;

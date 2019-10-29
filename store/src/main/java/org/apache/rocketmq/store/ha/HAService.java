@@ -46,16 +46,16 @@ public class HAService {
     private final AtomicInteger connectionCount = new AtomicInteger(0);
 
     private final List<HAConnection> connectionList = new LinkedList<>();
-
+    /** HA Master端监听客户端连接实现类 */
     private final AcceptSocketService acceptSocketService;
 
     private final DefaultMessageStore defaultMessageStore;
 
     private final WaitNotifyObject waitNotifyObject = new WaitNotifyObject();
     private final AtomicLong push2SlaveMaxOffset = new AtomicLong(0);
-
+    /** 主从同步通知实现类 */
     private final GroupTransferService groupTransferService;
-
+    /** HA Client端实现类 */
     private final HAClient haClient;
 
     public HAService(final DefaultMessageStore defaultMessageStore) throws IOException {
