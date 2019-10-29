@@ -110,8 +110,10 @@ public class CommitLog {
         this.defaultMessageStore = defaultMessageStore;
 
         if (FlushDiskType.SYNC_FLUSH == defaultMessageStore.getMessageStoreConfig().getFlushDiskType()) {
+            // 同步刷盘
             this.flushCommitLogService = new GroupCommitService();
         } else {
+            // 异步刷盘
             this.flushCommitLogService = new FlushRealTimeService();
         }
 
@@ -710,7 +712,7 @@ public class CommitLog {
         storeStatsService.getSinglePutMessageTopicTimesTotal(msg.getTopic()).incrementAndGet();
         storeStatsService.getSinglePutMessageTopicSizeTotal(topic).addAndGet(result.getWroteBytes());
 
-        // 进行同步||异步 flush||commit
+        // 进行同步 || 异步flush || commit
         GroupCommitRequest request = null;
         // Synchronization flush
         // 10、flush数据到磁盘，分同步和异步
@@ -979,12 +981,12 @@ public class CommitLog {
     }
 
     /**
-     * 实时 commit commitLog 线程服务
+     * 实时commit commitLog线程服务
      */
     class CommitRealTimeService extends FlushCommitLogService {
 
         /**
-         * 最后 commit 时间戳
+         * 最后commit时间戳
          */
         private long lastCommitTimestamp = 0;
 
