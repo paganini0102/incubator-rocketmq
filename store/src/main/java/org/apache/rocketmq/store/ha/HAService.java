@@ -111,11 +111,13 @@ public class HAService {
     // }
 
     public void start() throws Exception {
+        // 主服务器启动，并在特定端口上监听从服务器的连接
         this.acceptSocketService.beginAccept();
+        // 从服务器主动连接主服务器，主服务器接收客户端的连接，并建立相关TCP连接
         this.acceptSocketService.start();
-
+        // 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器
         this.groupTransferService.start();
-
+        // 从服务器保存消息并继续发送新的消息同步请求
         this.haClient.start();
     }
 
