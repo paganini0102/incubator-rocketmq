@@ -166,8 +166,11 @@ public class HAService {
      * Listens to slave connections to create {@link HAConnection}.
      */
     class AcceptSocketService extends ServiceThread {
+        /** Broker服务监听套接字（本地IP和端口号） */
         private final SocketAddress socketAddressListen;
+        /** 服务端Socket通道，基于NIO */
         private ServerSocketChannel serverSocketChannel;
+        /** 事件选择器，基于NIO */
         private Selector selector;
 
         public AcceptSocketService(final int port) {
@@ -200,7 +203,11 @@ public class HAService {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * 该方法是标准的基于NIO的服务端程式实例，选择器每1s处理一次连接就绪事件。
+         * 连接事件就绪后，调用ServerSocketChannel#accept()的方法创建SocketChannel。
+         * 然后为每一个连接创建一个HAConnection对象，该HAConnection将负载M-S数据同步逻辑。
+         */
         @Override
         public void run() {
             log.info(this.getServiceName() + " service started");
