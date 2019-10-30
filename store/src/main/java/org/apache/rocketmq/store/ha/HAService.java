@@ -345,13 +345,15 @@ public class HAService {
          */
         private final AtomicReference<String> masterAddress = new AtomicReference<>();
         private final ByteBuffer reportOffset = ByteBuffer.allocate(8);
+        /** 网络传输通道 */
         private SocketChannel socketChannel;
+        /** NIO事件选择器 */
         private Selector selector;
         /**
          * 最后读取数据时间，即Master写入socket事件
          */
         private long lastWriteTimestamp = System.currentTimeMillis();
-
+        /** 反馈Slave当前的复制进度，commitlog文件最大偏移量 */
         private long currentReportedOffset = 0;
         /**
          * {@link #byteBufferRead}处理的到位
