@@ -930,7 +930,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     }
 
     /**
-     * 订阅 Topic
+     * 订阅Topic
      *
      * @param topic Topic
      * @param subExpression 订阅表达式

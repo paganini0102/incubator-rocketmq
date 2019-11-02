@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class IndexFile {
     private static final Logger log = LoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);
+    /** hashslot个数，并不是hash槽使用的个数 */
     private static int hashSlotSize = 4;
     private static int indexSize = 20;
     private static int invalidIndex = 0;

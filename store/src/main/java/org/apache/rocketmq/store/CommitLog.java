@@ -719,7 +719,7 @@ public class CommitLog {
         if (FlushDiskType.SYNC_FLUSH == this.defaultMessageStore.getMessageStoreConfig().getFlushDiskType()) {
             final GroupCommitService service = (GroupCommitService) this.flushCommitLogService;
             if (msg.isWaitStoreMsgOK()) {
-                // 构建GroupCommitRequest同步任务并提交到GroupCommitRequest
+                // 构建GroupCommitRequest同步任务并提交到GroupCommitService
                 request = new GroupCommitRequest(result.getWroteOffset() + result.getWroteBytes());
                 service.putRequest(request);
                 // 等待同步刷盘任务完成，如果超时则返回刷盘错误，刷盘成功后正常返回给调用方
