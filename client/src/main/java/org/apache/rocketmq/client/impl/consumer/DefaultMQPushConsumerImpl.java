@@ -179,6 +179,12 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
         this.mQClientFactory.getMQAdminImpl().createTopic(key, newTopic, queueNum, topicSysFlag);
     }
 
+    /**
+     * 获取消费者对主题topic分配的消息队列
+     * @param topic
+     * @return
+     * @throws MQClientException
+     */
     public Set<MessageQueue> fetchSubscribeMessageQueues(String topic) throws MQClientException {
         Set<MessageQueue> result = this.rebalanceImpl.getTopicSubscribeInfoTable().get(topic);
         if (null == result) {
@@ -539,7 +545,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     }
 
     /**
-     * 注册消息监听器
+     * 注册并发消息事件监听器
      *
      * @param messageListener 消息监听器
      */
@@ -554,7 +560,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     }
 
     /**
-     * 发回消息
+     * 发送消息ACK确认
      *
      * @param msg 消息
      * @param delayLevel 延迟级别
