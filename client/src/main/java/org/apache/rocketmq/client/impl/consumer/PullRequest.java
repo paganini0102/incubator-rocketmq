@@ -27,19 +27,19 @@ public class PullRequest {
      */
     private String consumerGroup;
     /**
-     * 消息队列
+     * 待拉取消息队列
      */
     private MessageQueue messageQueue;
     /**
-     * 处理队列
+     * 消息处理队列
      */
     private ProcessQueue processQueue;
     /**
-     * 下一个 offset，消息拉取队列开始位置
+     * 待拉取的MessageQueue偏移量
      */
     private long nextOffset;
     /**
-     * // TODO 疑问：用处是？
+     * 是否被锁定
      */
     private boolean lockedFirst = false;
 

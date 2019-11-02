@@ -39,15 +39,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class RebalanceImpl {
     protected static final Logger log = ClientLogger.getLog();
     /**
-     * 消息队列 和 消息处理队列 Map
+     * 消息队列和消息处理队列Map
      */
     protected final ConcurrentHashMap<MessageQueue, ProcessQueue> processQueueTable = new ConcurrentHashMap<>(64);
     /**
-     * Topic 和 消息队列 订阅Map
+     * Topic和消息队列订阅Map
      */
     protected final ConcurrentHashMap<String/* topic */, Set<MessageQueue>> topicSubscribeInfoTable = new ConcurrentHashMap<>();
     /**
-     * Topic 和 订阅数据 Map
+     * Topic和订阅数据Map
      */
     protected final ConcurrentHashMap<String /* topic */, SubscriptionData> subscriptionInner = new ConcurrentHashMap<>();
     /**
@@ -55,7 +55,7 @@ public abstract class RebalanceImpl {
      */
     protected String consumerGroup;
     /**
-     * 消息模型
+     * 消息模型，分为集群模式、广播模式、默认为集群模式
      */
     protected MessageModel messageModel;
     /**
