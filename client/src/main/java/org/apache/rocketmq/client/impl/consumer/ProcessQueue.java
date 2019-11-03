@@ -110,12 +110,19 @@ public class ProcessQueue {
      */
     private volatile long msgAccCnt = 0;
 
+    /**
+     * 判断锁是否过期，锁超时时间默认为30s
+     * 可以通过系统参数rocketmq.client.rebalance.lockMaxLiveTime来设置
+     *
+     * @return
+     */
     public boolean isLockExpired() {
         return (System.currentTimeMillis() - this.lastLockTimestamp) > REBALANCE_LOCK_MAX_LIVE_TIME;
     }
 
     /**
-     * 是否拉取超时
+     * 判断PullMessageService是否空闲，默认120s
+     * 通过系统参数rockmq.client.pull.pullMaxIdleTime来设置
      *
      * @return 是否
      */
@@ -124,7 +131,7 @@ public class ProcessQueue {
     }
 
     /**
-     * 移除过期消息
+     * 移除消费超时的消息，默认超过15分钟未消费的消息将延迟3个延迟级别再消费
      *
      * @param pushConsumer Consumer
      */
@@ -183,8 +190,7 @@ public class ProcessQueue {
     }
 
     /**
-     * 添加消息，并返回是否提交给消费者
-     * 返回true，当有新消息添加成功时，
+     * 添加消息，PullMessageService拉取消息后，现调用该方法将消息添加到ProccessQueue
      *
      * @param msgs 消息
      * @return 是否提交给消费者
@@ -233,7 +239,9 @@ public class ProcessQueue {
     }
 
     /**
-     * 消息跨度。最大offset - 最小offset。
+     * 获取当前消息最大间隔
+     * getMaxSpan() / 20并不能说明Procequeue中包含的消息个数，
+     * 但是能说明当前处理队列中第一条消息与最后一条消息的偏移量已经超过的消息个数
      *
      * @return 消息跨度
      */
@@ -319,7 +327,7 @@ public class ProcessQueue {
     }
 
     /**
-     * 回滚消费中的消息
+     * 将msgTreeMapTmp中所有消息重新放入到msgTreeMap并清除msgTreeMapTmp
      * 逻辑类似于{@link #makeMessageToCosumeAgain(List)}
      */
     public void rollback() {

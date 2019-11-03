@@ -113,7 +113,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
      */
     private boolean consumeOrderly = false;
     /**
-     * 消息监听器
+     * 消息业务监听器
      */
     private MessageListener messageListenerInner;
     private OffsetStore offsetStore;

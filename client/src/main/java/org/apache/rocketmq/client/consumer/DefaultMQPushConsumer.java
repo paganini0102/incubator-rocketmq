@@ -66,7 +66,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      * Consumers of the same role is required to have exactly same subscriptions and consumerGroup to correctly achieve
      * load balance. It's required and needs to be globally unique.
      * </p>
-     * 消费分组
+     * 消费者所属组
      *
      * See <a href="http://rocketmq.incubator.apache.org/docs/core-concept/">here</a> for further discussion.
      */
@@ -81,6 +81,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      * balances; Conversely, if the broadcasting is set, each consumer client will consume all subscribed messages
      * separately.
      * </p>
+     * 消息消费模式，分为集群模式、广播模式，默认为集群模式
      *
      * This field defaults to clustering.
      */
@@ -116,6 +117,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
      *         messages born prior to {@link #consumeTimestamp} will be ignored
      *     </li>
      * </ul>
+     * 根据消息进度从消息服务器拉取不到消息时重新计算消费策略
      */
     private ConsumeFromWhere consumeFromWhere = ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET;
 
@@ -130,35 +132,37 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
 
     /**
      * Queue allocation algorithm specifying how message queues are allocated to each consumer clients.
+     * 集群模式下消息队列负载策略
      */
     private AllocateMessageQueueStrategy allocateMessageQueueStrategy;
 
     /**
      * Subscription relationship
-     * 订阅关系
+     * 订阅信息
      */
     private Map<String /* topic */, String /* sub expression */> subscription = new HashMap<>();
 
     /**
      * Message listener
-     * 消息监听器
+     * 消息业务监听器
      */
     private MessageListener messageListener;
 
     /**
      * Offset Storage
+     * 消息消费进度存储器
      */
     private OffsetStore offsetStore;
 
     /**
      * Minimum consumer thread number
-     * 消息线程最小数量
+     * 消息者线程最小数量
      */
     private int consumeThreadMin = 20;
 
     /**
      * Max consumer thread number
-     * 消息线程最大数量
+     * 消息者线程最大数量
      */
     private int consumeThreadMax = 64;
 
