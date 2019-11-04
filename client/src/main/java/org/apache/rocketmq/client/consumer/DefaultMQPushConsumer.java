@@ -185,6 +185,7 @@ public class DefaultMQPushConsumer extends ClientConfig implements MQPushConsume
 
     /**
      * Message pull Interval
+     * 推模式下拉取所拉取的条数（默认32条）
      */
     private long pullInterval = 0;
 
